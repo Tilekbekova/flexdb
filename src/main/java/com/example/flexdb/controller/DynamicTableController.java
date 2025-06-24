@@ -26,7 +26,6 @@ public class DynamicTableController {
     }
 
 
-
     @GetMapping("/{tableName}")
     public ResponseEntity<CreatedTableResponse> getTableSchema(@PathVariable String tableName) {
         CreatedTableResponse response = dynamicTableService.getTableSchema(tableName);

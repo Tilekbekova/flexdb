@@ -1,6 +1,5 @@
 package com.example.flexdb.service.impl;
 
-
 import com.example.flexdb.dto.*;
 import com.example.flexdb.entity.DynamicColumnDefinition;
 import com.example.flexdb.entity.DynamicTableDefinition;
@@ -10,15 +9,16 @@ import com.example.flexdb.repository.DynamicTableDefinitionRepository;
 import com.example.flexdb.service.DynamicTableService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DynamicTableServiceImpl implements DynamicTableService {
 
     private final JdbcTemplate jdbcTemplate;
@@ -30,6 +30,8 @@ public class DynamicTableServiceImpl implements DynamicTableService {
     @Override
     @Transactional
     public CreatedTableResponse createDynamicTable(CreateTableRequest request) {
+        log.info("Создание таблицы: {}", request.getTableName());
+
         // 1. Валидация входных данных
         validateTableName(request.getTableName());
         validateColumns(request.getColumns());
@@ -42,6 +44,7 @@ public class DynamicTableServiceImpl implements DynamicTableService {
 
         // 4. Выполнение DDL (создание таблицы)
         jdbcTemplate.execute(createSql);
+        log.info("Таблица '{}' успешно создана", request.getTableName());
 
         // 5. Сохранение метаданных
         DynamicTableDefinition table = new DynamicTableDefinition();
@@ -51,8 +54,7 @@ public class DynamicTableServiceImpl implements DynamicTableService {
         table.setColumns(columns);
         tableRepo.save(table);
 
-
-        // 6. Сохранение метаданных
+        // 6. Формирование ответа
         CreatedTableResponse response = new CreatedTableResponse();
         response.setTableName(table.getTableName());
         response.setUserFriendlyName(table.getUserFriendlyName());
@@ -67,7 +69,6 @@ public class DynamicTableServiceImpl implements DynamicTableService {
         }).toList());
 
         return response;
-
     }
 
     /**
@@ -76,16 +77,14 @@ public class DynamicTableServiceImpl implements DynamicTableService {
     private List<DynamicColumnDefinition> prepareColumnEntities(CreateTableRequest request) {
         List<DynamicColumnDefinition> result = new ArrayList<>();
 
-        // Автоматически добавляем колонку id
         DynamicColumnDefinition idColumn = new DynamicColumnDefinition();
         idColumn.setColumnName("id");
-        idColumn.setColumnType("BIGINT");
-        idColumn.setPostgresColumnType("BIGINT");
+        idColumn.setColumnType("BIGINT"); // логический тип
+        idColumn.setPostgresColumnType("BIGSERIAL"); // физический тип для DDL
         idColumn.setNullable(false);
         idColumn.setPrimaryKeyInternal(true);
         result.add(idColumn);
 
-        // Остальные колонки из запроса
         for (ColumnDefinitionDto col : request.getColumns()) {
             DynamicColumnDefinition entity = new DynamicColumnDefinition();
             entity.setColumnName(col.getName());
@@ -145,7 +144,7 @@ public class DynamicTableServiceImpl implements DynamicTableService {
     }
 
     /**
-     * //Проверка списка колонок на дубли, запрещённые имена и поддерживаемые типы.
+     * Проверка списка колонок на дубли, запрещённые имена и поддерживаемые типы.
      */
     private void validateColumns(List<ColumnDefinitionDto> columns) {
         Set<String> names = new HashSet<>();
@@ -175,8 +174,6 @@ public class DynamicTableServiceImpl implements DynamicTableService {
                 throw new IllegalArgumentException("Имя колонки должно содержать от 3 до 63 символов: только строчные латинские буквы, цифры и подчёркивания. Подчёркивание обязательно.");
             }
 
-
-
             if (!names.add(colName)) {
                 throw new IllegalArgumentException("Повторяющееся имя колонки: '" + colName + "'");
             }
@@ -185,11 +182,14 @@ public class DynamicTableServiceImpl implements DynamicTableService {
 
     /**
      * Получение полной схемы таблицы по имени.
+     *
      * @param tableName имя таблицы
      * @return объект с описанием таблицы и всех её колонок
      */
     @Override
     public CreatedTableResponse getTableSchema(String tableName) {
+        log.info("🔍 Получение схемы таблицы: {}", tableName);
+
         DynamicTableDefinition table = tableRepo.findByTableName(tableName)
                 .orElseThrow(() -> new ResourceNotFoundException("Таблица '" + tableName + "' не найдена"));
 
@@ -211,10 +211,12 @@ public class DynamicTableServiceImpl implements DynamicTableService {
 
     /**
      * Получение списка всех созданных пользователем таблиц с краткой информацией.
+     *
      * @return список таблиц
      */
     @Override
     public List<TableSummaryDto> getAllTableSummaries() {
+        log.info("Получение всех пользовательских таблиц");
         List<DynamicTableDefinition> allTables = tableRepo.findAll();
 
         return allTables.stream().map(t -> {
@@ -225,7 +227,4 @@ public class DynamicTableServiceImpl implements DynamicTableService {
             return dto;
         }).collect(Collectors.toList());
     }
-
 }
-
-
