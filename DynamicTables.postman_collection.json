@@ -1,0 +1,162 @@
+{
+	"info": {
+		"_postman_id": "b1169d4b-cad6-472e-83f2-fdef0a4aaba1",
+		"name": "DynamicTables",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19630144"
+	},
+	"item": [
+		{
+			"name": "Динамическое Создание Схем Таблиц",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"tableName\": \"users_info\",\r\n    \"userFriendlyName\": \"Юзеры\",\r\n    \"columns\": [\r\n        {\r\n            \"name\": \"full_name\",\r\n            \"type\": \"TEXT\",\r\n            \"isNullable\": false\r\n        },\r\n        {\r\n            \"name\": \"address_name\",\r\n            \"type\": \"TEXT\",\r\n            \"isNullable\": true\r\n        },\r\n            {\r\n            \"name\": \"age_user\",\r\n            \"type\": \"INTEGER\",\r\n            \"isNullable\": false\r\n        },\r\n         {\r\n            \"name\": \"is_active\",\r\n            \"type\": \"BOOLEAN\",\r\n            \"isNullable\": true\r\n         }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/dynamic-tables/schemas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"dynamic-tables",
+						"schemas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение Схемы Динамической Таблицы",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Получение Списка Всех Динамических Таблиц",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Создание Записи",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n \r\n  \"full_name\": \"Тилекбекова\",\r\n  \"age_user\": 21,\r\n  \"is_active\":true\r\n  \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/dynamic-tables/data/users_info",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"dynamic-tables",
+						"data",
+						"users_info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Чтение Списка Записей (с пагинацией)",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Чтение Записи по ID",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Обновление Записи (Полное)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"full_name\": \"Адина Тилекбекова\",\r\n  \"age_user\":23\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/dynamic-tables/data/users_info/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"dynamic-tables",
+						"data",
+						"users_info",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Удаление Записи",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/dynamic-tables/data/users_info/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"dynamic-tables",
+						"data",
+						"users_info",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
