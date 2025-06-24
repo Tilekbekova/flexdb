@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
     // Общий обработчик для неожиданных ошибок
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(
-            Exception ex,
+
             HttpServletRequest request) {
 
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", request.getRequestURI());
