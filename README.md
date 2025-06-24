@@ -168,7 +168,10 @@ DELETE /api/v1/dynamic-tables/data/users_info/2
 
 
 
+Тестирование API
 
+Коллекция Postman для всех запросов доступна в файле:
+DynamicTables.postman_collection.json
 
 
 
